@@ -1,6 +1,7 @@
 const express = require('express');
 const app = express();
 const port = 4000;
+const mongoose = require("mongoose");
 
 const cors = require("cors");
 require("dotenv").config();
@@ -9,68 +10,94 @@ require("dotenv").config();
 app.use(cors());
 app.use(express.json());
 
-let tasks = []; // temporary
+
+mongoose
+  .connect(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true })
+  .then(() => console.log("MongoDB connected"))
+  .catch((err) => console.error("MongoDB connection error:", err));
+
+  const taskSchema = new mongoose.Schema({
+    title: { type: String, required: true },
+    description: { type: String, required: false },
+    priority: { type: String, enum: ["Low", "Medium", "High", "Very high"], default: "Medium" },
+    dueDate: { type: Date, required: false },
+    markedAsCompleted: { type: Boolean, default: false },
+  });
+
+  const Task = mongoose.model("Task", taskSchema);
 
 // Get - all tasks
-app.get("/tasks", (request, response) => {
-  response.status(200).json(tasks);
+app.get("/tasks", async (request, response) => {
+  try {
+    const tasks = await Task.find();
+    response.status(200).json(tasks);
+  } catch (error) {
+    response.status(500).json({ message: "Error fetching tasks!", error: error });
+  }
 })
 
 // Post - new task
-app.post("/tasks", (request, response) => {
+app.post("/tasks", async (request, response) => {
   const { title, description, priority, dueDate } = request.body;
 
-  const addTask = {
-    id: tasks.length + 1,
-    title,
-    description,
-    priority: priority || "Not set",
-    dueDate: dueDate || null,
-    markedAsCompleted: false,
-  };
+  try {
+    const addTask = new Task({
+      title,
+      description,
+      priority: priority || "Medium",
+      dueDate: dueDate || null,
+      markedAsCompleted: false,
+    });
 
-  tasks.push(addTask);
-  response.status(201).json(addTask);
-})
+    const savedTask = await addTask.save();
+
+    response.status(201).json(savedTask);
+  } catch (error) {
+    response.status(500).json({ message: "Error creating task!", error: error });
+  }
+});
 
 // Delete - delete task
-app.delete("/tasks/:id", (request, response) => {
+app.delete("/tasks/:id", async (request, response) => {
   const { id } = request.params;
 
-  const taskID = tasks.findIndex((task) => task.id === parseInt(id));
+  try {
+    const deleteTask = await Task.deleteTaskById(id);
 
-  if ( taskID === -1 ) {
-    return response.status(404).json({ message: "Task not found, id below zero!" });
+    if (!deleteTask) {
+      return response.status(404).json({ message: "Task couldn't be deleted" })
+    }
+
+    response.status(200).json({ message: "Task deleted successfully!" })
+  } catch (error) {
+    response.status(500).json({ message: "Error deleting the task", error: error })
   }
-
-  tasks.splice(taskID, 1);
-  response.status(200).json({ message: "Task successfully deleted!" });
 })
 
 // Put - edit task
-app.put("/tasks/:id", (request, response) => {
+app.put("/tasks/:id", async (request, response) => {
   const { id } = request.params;
   const { title, description, priority, dueDate, markedAsCompleted } = request.body;
 
-  const taskID = tasks.findIndex((task) => task.id === parseInt(id));
+  try {
+    const updateTask = await Task.updateTaskById(
+      id,
+      { title, description, priority, dueDate, markedAsCompleted },
+      { new: true }
+    )
 
-  if (taskID === -1 ) {
-    return response.status(404).json({ message: "Task not found, id below zero!" });
+    if (!updateTask) {
+      return response.status(404).json({ message: "Task not found!" })
+    }
+
+    response.status(200).json(updateTask);
+  } catch (error) {
+    response.status(500).json({ message: "Error updating the task", error: error });
   }
-
-  tasks[taskID] = {
-    ...tasks[taskID],
-    title: title || tasks[taskID].title,
-    description: description || tasks[taskID].description,
-    priority: priority || tasks[taskID].priority,
-    dueDate: dueDate || tasks[taskID].dueDate,
-    markedAsCompleted: markedAsCompleted !== undefined ? markedAsCompleted : tasks[taskID].markedAsCompleted,
-  };
-
-  response.status(200).json(tasks[taskID]);
 })
 
 
+
 app.listen(port, () => {
-  console.log(`Listening on localhost:${port}`);
+  console.log(`\nListening on localhost:${port}`);
 });
