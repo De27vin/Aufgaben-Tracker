@@ -26,6 +26,8 @@ mongoose
 
   const Task = mongoose.model("Task", taskSchema);
 
+
+
 // Get - all tasks
 app.get("/tasks", async (request, response) => {
   try {
@@ -62,7 +64,7 @@ app.delete("/tasks/:id", async (request, response) => {
   const { id } = request.params;
 
   try {
-    const deleteTask = await Task.deleteTaskById(id);
+    const deleteTask = await Task.findByIdAndDelete(id);
 
     if (!deleteTask) {
       return response.status(404).json({ message: "Task couldn't be deleted" })
@@ -80,7 +82,7 @@ app.put("/tasks/:id", async (request, response) => {
   const { title, description, priority, dueDate, markedAsCompleted } = request.body;
 
   try {
-    const updateTask = await Task.updateTaskById(
+    const updateTask = await Task.findByIdAndUpdate(
       id,
       { title, description, priority, dueDate, markedAsCompleted },
       { new: true }
