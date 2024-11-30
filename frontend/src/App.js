@@ -39,7 +39,7 @@ const App = () => {
   // Delete - delete task
   const deleteTask = async (id) => {
     try {
-      await fetch(`http://localhost:4000/${id}`, {
+      await fetch(`http://localhost:4000/tasks/${id}`, {
         method: "DELETE",
       })
       setTasks(tasks.filter((task) => task._id !== id))

@@ -64,6 +64,10 @@ app.delete("/tasks/:id", async (request, response) => {
   const { id } = request.params;
 
   try {
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({ message: "Invalid ID format" });
+    }
+
     const deleteTask = await Task.findByIdAndDelete(id);
 
     if (!deleteTask) {
