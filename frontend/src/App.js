@@ -50,7 +50,7 @@ const App = () => {
 
   return (
     <div className="App">
-      <h1>Tasks</h1>
+      <h1 className="title">Tasks</h1>
       <TaskForm addTask={addTask} />
       <TaskList tasks={tasks} deleteTask={deleteTask} />
 

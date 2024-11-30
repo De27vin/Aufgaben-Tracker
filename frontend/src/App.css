@@ -1,38 +1,116 @@
-.App {
+/* taskList.js */
+.tasks-list {
+  display: flex;
+  flex-wrap: wrap; 
+  gap: 15px; 
+  justify-content: center;
+  margin: 15px;
+}
+
+/* task.js */
+.task {
+  flex: 1 1 calc(20% - 15px); 
+  box-sizing: border-box; 
+  min-width: 150px; 
+  max-width: 400px; 
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  padding: 15px;
   text-align: center;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+/* App.js */
+.title {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
+/* taskForm.js */
+.task-form-div {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
 }
 
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
+.task-form {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  font-size: calc(10px + 2vmin);
+  gap: 15px; 
+  background-color: #f9f9f9; 
+  padding: 20px;
+  border: 1px solid #ccc; 
+  border-radius: 8px; 
+  width: 90%; 
+  max-width: 400px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); 
+}
+
+.form-title,
+.form-description,
+.form-priority,
+.form-date {
+  width: 100%; 
+}
+
+.form-title input,
+.form-description textarea,
+.form-priority select,
+.form-date input {
+  width: 100%; 
+  padding: 10px;
+  font-size: 1rem;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.form-title input:focus,
+.form-description textarea:focus,
+.form-priority select:focus,
+.form-date input:focus {
+  outline: none;
+  border-color: #520E7D;
+  box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+}
+
+.form-priority {
+  height: 30px;
+  border-radius: 5px;
+  background-color: #fff; 
+}
+
+.form-priority {
+  background-color: white;
+  color: black;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  padding: 5px;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.form-priority:focus {
+  outline: none; 
+  border: 1px solid #520E7D;
+}
+
+.form-button {
+  padding: 10px 20px;
+  font-size: 1rem;
   color: white;
+  background-color: #520E7D;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  transition: transform 0.3s ease, background-color 0.3s ease;
 }
 
-.App-link {
-  color: #61dafb;
-}
-
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.form-button:hover {
+  background-color: #6c4883;
+  transform: scale(1.05);
 }
