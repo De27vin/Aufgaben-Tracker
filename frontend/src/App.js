@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import './App.css';
 import TaskForm from './components/taskForm';
-import TaskList from './components/taskList'
+import TaskList from './components/taskList';
 
 const App = () => {
   const [tasks, setTasks] = useState([]);
@@ -48,11 +48,33 @@ const App = () => {
     }
   }
 
+  // Put - change task
+  const editTask = async (id, updatedTask) => {
+    try {
+      const response = await fetch(`http://localhost:4000/tasks/${id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(updatedTask),
+      })
+
+      if (response.ok) {
+        const updatedTask = tasks.map((task) =>
+          task._id === id ? { ...task, ...updatedTask } : task
+        )
+        setTasks(updatedTask)
+      } else {
+        console.error("Couldn't update task", await response.json());
+      }
+    } catch (error) {
+      console.error("Couldn't update task", error);
+    }
+  }
+
   return (
     <div className="App">
       <h1 className="title">Tasks</h1>
       <TaskForm addTask={addTask} />
-      <TaskList tasks={tasks} deleteTask={deleteTask} />
+      <TaskList tasks={tasks} deleteTask={deleteTask} editTask={editTask} />
 
     </div>
   )
