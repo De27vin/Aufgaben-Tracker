@@ -3,16 +3,21 @@ const app = express();
 const port = 4000;
 const mongoose = require("mongoose");
 
-const cors = require("cors");
 require("dotenv").config();
+const cors = require("cors");
+const path = require('path');
 
+app.use(cors({
+  origin: "https://localhost:3000",
+  methods: ["GET", "POST", "PUT", "DELETE"],
+  credentials: true,
+}));
 
-app.use(cors());
 app.use(express.json());
 
 
 mongoose
-  .connect(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true })
+  .connect(process.env.MONGO_URI)
   .then(() => console.log("MongoDB connected"))
   .catch((err) => console.error("MongoDB connection error:", err));
 
@@ -28,6 +33,8 @@ mongoose
 
 
 
+app.use(express.static(path.join(__dirname, 'public')));
+
 // Get - all tasks
 app.get("/tasks", async (request, response) => {
   try {
@@ -37,6 +44,11 @@ app.get("/tasks", async (request, response) => {
     response.status(500).json({ message: "Error fetching tasks!", error: error });
   }
 })
+
+// Get - all other routes
+app.get('*', (request, response) => {
+  response.sendFile(path.join(__dirname, 'public', 'index.html'));
+});
 
 // Post - new task
 app.post("/tasks", async (request, response) => {
