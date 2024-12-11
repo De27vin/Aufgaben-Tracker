@@ -13,7 +13,7 @@ const App = () => {
   // Get - all tasks
   const getTasks = async () => {
     try {
-      const response = await fetch(`http://localhost:4000/tasks`);
+      const response = await fetch(`https://aufgaben-tracker-fullstack-662141340388.europe-west10.run.app/tasks`);
       const tasks = await response.json();
       setTasks(tasks);
     } catch (error) {
@@ -24,7 +24,7 @@ const App = () => {
   // Post - new task
   const addTask = async (task) => {
     try {
-      const response = await fetch(`http://localhost:4000/tasks`, {
+      const response = await fetch(`https://aufgaben-tracker-fullstack-662141340388.europe-west10.run.app/tasks`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(task),
@@ -39,7 +39,7 @@ const App = () => {
   // Delete - delete task
   const deleteTask = async (id) => {
     try {
-      await fetch(`http://localhost:4000/tasks/${id}`, {
+      await fetch(`https://aufgaben-tracker-fullstack-662141340388.europe-west10.run.app/tasks/${id}`, {
         method: "DELETE",
       })
       setTasks(tasks.filter((task) => task._id !== id))
@@ -51,7 +51,7 @@ const App = () => {
   // Put - change task
   const editTask = async (id, updatedTask) => {
     try {
-      const response = await fetch(`http://localhost:4000/tasks/${id}`, {
+      const response = await fetch(`https://aufgaben-tracker-fullstack-662141340388.europe-west10.run.app/tasks/${id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(updatedTask),
